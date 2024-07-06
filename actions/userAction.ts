@@ -2,6 +2,15 @@
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
+export const getUsers = async () => {
+  const response = await fetch("http://192.168.29.231:8010/api/users", {
+    next: { tags: ["user"], revalidate: 60 },
+  });
+
+  const users = await response.json();
+  return users;
+};
+
 export const addUsers = async (formData: FormData) => {
   // const { formikValues, formRef } = formValues;
 
@@ -19,6 +28,7 @@ export const addUsers = async (formData: FormData) => {
   });
 
   const user = await response.json();
+
   revalidateTag("user");
   redirect("/");
 };
@@ -57,7 +67,15 @@ export const editUsers = async (payload: any) => {
       },
     }
   );
-  const editUser = await response?.json();
+  const editUser = response
+    ?.json()
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
   revalidateTag("user");
   redirect("/");
 };

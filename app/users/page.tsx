@@ -1,14 +1,14 @@
-import AddUsers from "@/components/AddUsers";
+import dynamic from "next/dynamic";
 import React from "react";
-import { addUsers, editUsers } from "@/actions/userAction";
+import { addUsers, editUsers, getUsers } from "@/actions/userAction";
 type Props = {};
 
-const page = async (props: Props) => {
-  const response = await fetch("http://192.168.29.231:8010/api/users", {
-    next: { tags: ["user"], revalidate:60 },
-  });
+const AddUsers = dynamic(() => import("../../components/AddUsers"), {
+  ssr: false,
+});
 
-  const users = await response.json()
+const page = async (props: Props) => {
+  const users = await getUsers()
   return (
     <div>
       <AddUsers data={users} addUsers={addUsers} editUsers={editUsers} />
